@@ -21,3 +21,7 @@ Control an arduino with motor shield over serial.
  * stof -> Step one forward INTERLEAVE
  * stob -> Step one backward INTERLEAVE
  * sh   -> Step home SINGLE (send home)
+ 
+ ## LabView
+  * Created an initial demo LabView GUI for the Arduino code.
+  * Needs some documentation, and smoke testing.
