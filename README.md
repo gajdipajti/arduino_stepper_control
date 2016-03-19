@@ -13,7 +13,7 @@ Control an arduino with motor shield over serial.
 # Communication with the Controller:
 ## Serial: 115200 8N1
 ### Send Command: Carridge Return (\r)
- * gp?  -> GET laser status (0: disabled, 1: enabled)
+ * gp?  -> GET position
  * spsN -> Step to N position using SINGLE
  * spiN -> Step to N position using INTERLEAVE
  * stsN -> Step N positions using SINGLE
