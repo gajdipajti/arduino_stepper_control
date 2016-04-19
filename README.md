@@ -27,6 +27,7 @@ Control an arduino with motor shield over serial.
  * Created an initial demo LabView GUI for the Arduino code.
  * Covers all arduino functions. No extra functionality/calculation.
  * With tooltips on the GUI.
+ * Creates a settings file and command log (if enabled) to the default LabView Data folder.
 
 # Help, contact, and a request.
  * If you need help, open an issue, so I can track them.
