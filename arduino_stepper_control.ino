@@ -1,7 +1,7 @@
 /*
   Stepper motor driver.
   dev: Gajdos Tamás
-  ver: 0.1
+  ver: 0.2
   
   Main Functions:
     * Turn to N position: spsN || spiN
@@ -11,12 +11,24 @@
     * Send home:          sh
     * Get position:       gp?
     * Set speed?
+    
+  Main 28BYJ-28 Functions:
+    * Turn to N position: bpsN || bpiN
+    * Turn N steps:       btsN || btiN
+    * Step one forward:   btof
+    * Step one backward:  btob
+    * Send home:          bh
+    * Get position:       gbp?
+    * Set speed?
   
 */
 #include <AFMotor.h>
 
-AF_Stepper motor(200, 2);
+AF_Stepper nema(200, 2);
+AF_Stepper byj48(64, 1);
+
 long CurrentPos = 0;
+long CurrentBos = 0;
 
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
@@ -25,9 +37,11 @@ void setup() {
   Serial.begin(115200);       // set up Serial library at 9600 bps
   Serial.println("Stepper test!");
      
-  motor.setSpeed(20);  // 10 rpm   
+  nema.setSpeed(20);
+  byj48.setSpeed(320);
      
-  motor.release();
+  nema.release();
+  byj48.release();
   delay(1000);
 }
 
@@ -35,40 +49,29 @@ void setHome(long Pos) {
   CurrentPos = Pos;
 }
 
-void gotoHome() {
-  Serial.println("sh");
-//  long stepsToHome = CurrentPos/2;
-//  if (CurrentPos > 0 ) {
-//    motor.step(stepsToHome, BACKWARD, SINGLE);
-//  } else {
-//    motor.step(-stepsToHome, FORWARD, SINGLE);
-//  }
-  Serial.println("OK\r");
+void setBHome(long Bos) {
+  CurrentBos = Bos;
 }
 
 void setPos(long Pos, int mode) {
   long deltaPos = Pos - CurrentPos;
   movePos(deltaPos, mode);
-//  if ( mode < 2 ){
-//    deltaPos = deltaPos/2;  
-//  }
-//  if (deltaPos > 0) {
-//    motor.step(deltaPos, FORWARD, mode);
-//  } else {
-//    motor.step(-deltaPos, BACKWARD, mode);
-//  }
-//  CurrentPos = Pos;
-//  Serial.println("OK\r");
 }
+
+void setBos(long Bos, int mode) {
+  long deltaBos = Bos - CurrentBos;
+  moveBos(deltaBos, mode);
+}
+
 
 void movePos(long dPos, int mode) {
   if ( mode < 2 ){
     dPos /= 2;  
   }
   if (dPos > 0) {
-    motor.step(dPos, FORWARD, mode);
+    nema.step(dPos, FORWARD, mode);
   } else {
-    motor.step(-dPos, BACKWARD, mode);
+    nema.step(-dPos, BACKWARD, mode);
   }
   if ( mode < 2 ){
     dPos *= 2;  
@@ -76,6 +79,24 @@ void movePos(long dPos, int mode) {
   CurrentPos += dPos;
   Serial.println("OK\r");
 }
+
+void moveBos(long dBos, int mode) {
+  if ( mode < 2 ){
+    dBos /= 2;  
+  }
+  if (dBos > 0) {
+    byj48.step(dBos, FORWARD, mode);
+  } else {
+    byj48.step(-dBos, BACKWARD, mode);
+  }
+  if ( mode < 2 ){
+    dBos *= 2;  
+  }
+  CurrentBos += dBos;
+  Serial.println("OK\r");
+}
+
+
 
 float toFloat(String s) {
   char carray[s.length() + 1];            //determine size of the array
@@ -90,9 +111,12 @@ void loop() {
     if (inputString.startsWith("gp?")) {
     // These are the get* functions
       Serial.println(CurrentPos);
-   
+    } else if (inputString.startsWith("gbp?")) {
+    // These are the get* functions
+      Serial.println(CurrentBos);
+  
     } else if (inputString.startsWith("s")) {
-    // These are the set* functions
+    // These are the set* functions for NEMA
       if (inputString.startsWith("sps")) {
         // Set position SINGLE
         setPos(toFloat(inputString.substring(3)), SINGLE);
@@ -108,22 +132,55 @@ void loop() {
         movePos(toFloat(inputString.substring(3)), INTERLEAVE);
       } else if (inputString.startsWith("stof")) {
         // Step one forward INTERLEAVE
-        motor.onestep(FORWARD, INTERLEAVE);
+        nema.onestep(FORWARD, INTERLEAVE);
         CurrentPos++;
       } else if (inputString.startsWith("stob")) {
-        motor.onestep(BACKWARD, INTERLEAVE);
+        nema.onestep(BACKWARD, INTERLEAVE);
         CurrentPos--;
         // Step one backward INTERLEAVE
       } else if (inputString.startsWith("sh")) {
         // Go home SINGLE
         if (CurrentPos > 0 ) {
-          motor.step(CurrentPos/2, BACKWARD, SINGLE);
+          nema.step(CurrentPos/2, BACKWARD, SINGLE);
         } else {
-          motor.step(-CurrentPos/2, FORWARD, SINGLE);
+          nema.step(-CurrentPos/2, FORWARD, SINGLE);
         }
         setHome(0);
         Serial.println("OK\r");
       }
+    } else if (inputString.startsWith("b")) {
+      // These are the set* functions for 28BYJ-48
+      if (inputString.startsWith("bps")) {
+        // Set position SINGLE
+        setBos(toFloat(inputString.substring(3)), SINGLE);
+      } else if (inputString.startsWith("bpi")) {
+        // Set position INTERLEAVE
+        setBos(toFloat(inputString.substring(3)), INTERLEAVE);
+        float pos = toFloat(inputString.substring(3));
+      } else if (inputString.startsWith("bts")) {
+        // Step multiple SINGLE
+        moveBos(toFloat(inputString.substring(3)), SINGLE);
+      } else if (inputString.startsWith("bti")) {
+        // Step multiple INTERLEAVE
+        moveBos(toFloat(inputString.substring(3)), INTERLEAVE);
+      } else if (inputString.startsWith("btof")) {
+        // Step one forward INTERLEAVE
+        byj48.onestep(FORWARD, INTERLEAVE);
+        CurrentBos++;
+      } else if (inputString.startsWith("btob")) {
+        byj48.onestep(BACKWARD, INTERLEAVE);
+        CurrentBos--;
+        // Step one backward INTERLEAVE
+      } else if (inputString.startsWith("bh")) {
+        // Go home SINGLE
+        if (CurrentBos > 0 ) {
+          byj48.step(CurrentBos/2, BACKWARD, SINGLE);
+        } else {
+          byj48.step(-CurrentBos/2, FORWARD, SINGLE);
+        }
+        setBHome(0);
+        Serial.println("OK\r");
+      }  
     }
     // clear the string:
     inputString = "";
@@ -150,3 +207,4 @@ void serialEvent() {
     } 
   }
 }
+

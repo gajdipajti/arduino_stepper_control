@@ -13,6 +13,8 @@ Control an arduino with motor shield over serial.
 # Communication with the Controller:
 ## Serial: 115200 8N1
 ### Send Command: Carridge Return (\r)
+
+NEMA:
  * gp?  -> GET position
  * spsN -> Step to N position using SINGLE
  * spiN -> Step to N position using INTERLEAVE
@@ -21,7 +23,20 @@ Control an arduino with motor shield over serial.
  * stof -> Step one forward INTERLEAVE
  * stob -> Step one backward INTERLEAVE
  * sh   -> Step home SINGLE (send home)
- 
+
+28BYJ-48:
+ * gbp?  -> GET position
+ * bpsN -> Step to N position using SINGLE
+ * bpiN -> Step to N position using INTERLEAVE
+ * btsN -> Step N positions using SINGLE
+ * btiN -> Step N positions using INTERLEAVE
+ * btof -> Step one forward INTERLEAVE
+ * btob -> Step one backward INTERLEAVE
+ * bh   -> Step home SINGLE (send home)
+
+## Changelog:
+ * v0.2: I added a secondary stepper (28BYJ-48) to my setup, and I duplicated the code (Very, very lazy programming) to include commands for the new stepper.
+
 ## LabView GUI
  * Created with LabView v14.
  * Created an initial demo LabView GUI for the Arduino code.
