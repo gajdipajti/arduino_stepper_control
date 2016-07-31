@@ -1,5 +1,5 @@
 # arduino-stepper-control
-Control an arduino with motor shield over serial.
+Control an arduino uno with motor shield over serial.
 
  * The String->float conversion: http://forum.arduino.cc/index.php?topic=179666.msg1331654#msg1331654
  * AFMotor: https://github.com/adafruit/Adafruit-Motor-Shield-library
@@ -8,7 +8,7 @@ Control an arduino with motor shield over serial.
 # Start Here:
  1. Clone the repository to your sketchbook folder.
  2. Connect a Motor Shield v1 with a Stepper Motor.
- 3. Burn it to your Arduino.
+ 3. Burn it to your Arduino UNO.
  
 # Communication with the Controller:
 ## Serial: 115200 8N1
@@ -39,7 +39,7 @@ NEMA:
 
 ## LabView GUI
  * Created with LabView v14.
- * Created an initial demo LabView GUI for the Arduino code.
+ * Created an initial demo LabView GUI for the Arduino code (NEMA only).
  * Covers all arduino functions. No extra functionality/calculation.
  * With tooltips on the GUI.
  * Creates a settings file and command log (if enabled) to the default LabView Data folder.
@@ -48,3 +48,6 @@ NEMA:
  * If you need help, open an issue, so I can track them.
  * If you have any suggestions, open an issue.
  * If you use the repository give a star. It is good to know, that someone uses the code you have written.
+ * ISSUES with Arduino Leonardo:
+   * The Leonardo board does not support the Motor Shield v1.
+   * The Leonardo board does not handle SerialEvents. [FIX](http://forum.arduino.cc/index.php?topic=150558.msg1131262#msg1131262)
