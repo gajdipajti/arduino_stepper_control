@@ -36,6 +36,8 @@ NEMA:
 
 ## Changelog:
  * v0.2: I added a secondary stepper (28BYJ-48) to my setup, and I duplicated the code (Very, very lazy programming) to include commands for the new stepper.
+ * v0.2.1: I changed the second stepper to another nema, so I changed the setup value and the name.
+ * v0.2.1: Added a button to the labview code, to switch between steppers.
 
 ## LabView GUI
  * Created with LabView v14.

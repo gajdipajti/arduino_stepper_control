@@ -1,7 +1,7 @@
 /*
   Stepper motor driver.
   dev: Gajdos Tamás
-  ver: 0.2
+  ver: 0.2.1
   
   Main Functions:
     * Turn to N position: spsN || spiN
@@ -12,7 +12,7 @@
     * Get position:       gp?
     * Set speed?
     
-  Main 28BYJ-28 Functions:
+  Main TIRF Functions:
     * Turn to N position: bpsN || bpiN
     * Turn N steps:       btsN || btiN
     * Step one forward:   btof
@@ -25,7 +25,7 @@
 #include <AFMotor.h>
 
 AF_Stepper nema(200, 2);
-AF_Stepper byj48(64, 1);
+AF_Stepper tirf(200, 1);
 
 long CurrentPos = 0;
 long CurrentBos = 0;
@@ -38,10 +38,10 @@ void setup() {
   Serial.println("Stepper test!");
      
   nema.setSpeed(20);
-  byj48.setSpeed(320);
+  tirf.setSpeed(20);
      
   nema.release();
-  byj48.release();
+  tirf.release();
   delay(1000);
 }
 
@@ -85,9 +85,9 @@ void moveBos(long dBos, int mode) {
     dBos /= 2;  
   }
   if (dBos > 0) {
-    byj48.step(dBos, FORWARD, mode);
+    tirf.step(dBos, FORWARD, mode);
   } else {
-    byj48.step(-dBos, BACKWARD, mode);
+    tirf.step(-dBos, BACKWARD, mode);
   }
   if ( mode < 2 ){
     dBos *= 2;  
@@ -165,18 +165,18 @@ void loop() {
         moveBos(toFloat(inputString.substring(3)), INTERLEAVE);
       } else if (inputString.startsWith("btof")) {
         // Step one forward INTERLEAVE
-        byj48.onestep(FORWARD, INTERLEAVE);
+        tirf.onestep(FORWARD, INTERLEAVE);
         CurrentBos++;
       } else if (inputString.startsWith("btob")) {
-        byj48.onestep(BACKWARD, INTERLEAVE);
+        tirf.onestep(BACKWARD, INTERLEAVE);
         CurrentBos--;
         // Step one backward INTERLEAVE
       } else if (inputString.startsWith("bh")) {
         // Go home SINGLE
         if (CurrentBos > 0 ) {
-          byj48.step(CurrentBos/2, BACKWARD, SINGLE);
+          tirf.step(CurrentBos/2, BACKWARD, SINGLE);
         } else {
-          byj48.step(-CurrentBos/2, FORWARD, SINGLE);
+          tirf.step(-CurrentBos/2, FORWARD, SINGLE);
         }
         setBHome(0);
         Serial.println("OK\r");
