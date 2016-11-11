@@ -24,7 +24,7 @@ NEMA:
  * stob -> Step one backward INTERLEAVE
  * sh   -> Step home SINGLE (send home)
 
-28BYJ-48:
+NEMA2:
  * gbp?  -> GET position
  * bpsN -> Step to N position using SINGLE
  * bpiN -> Step to N position using INTERLEAVE
@@ -38,7 +38,8 @@ NEMA:
  * v0.2: I added a secondary stepper (28BYJ-48) to my setup, and I duplicated the code (Very, very lazy programming) to include commands for the new stepper.
  * v0.2.1: I changed the second stepper to another nema, so I changed the setup value and the name.
  * v0.2.1: Added a button to the labview code, to switch between steppers.
-
+ * v0.2.1-raw: A trimmed down version for a single Stepper contolled with L293D.
+  
 ## LabView GUI
  * Created with LabView v14.
  * Created an initial demo LabView GUI for the Arduino code (NEMA only).
@@ -53,3 +54,10 @@ NEMA:
  * ISSUES with Arduino Leonardo:
    * The Leonardo board does not support the Motor Shield v1.
    * The Leonardo board does not handle SerialEvents. [FIX](http://forum.arduino.cc/index.php?topic=150558.msg1131262#msg1131262)
+ * For the Leonardo I created a **raw** edition
+
+# arduino-stepper-control-raw
+ * A trimmed down version which only needs the Stepper library.
+ * Created for Leonardo+L293D+28BYJ-48
+ * Uses the same **NEMA** commands, and works with the LabView GUI.
+ * Pin 12,11,10,8 are used for the drive. Pin 13 is for enable/disable chip.
