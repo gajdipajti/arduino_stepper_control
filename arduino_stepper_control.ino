@@ -1,7 +1,7 @@
 /*
   Stepper motor driver.
   dev: Gajdos Tamás
-  ver: 0.2.1
+  ver: 0.2.2
   
   Main Functions:
     * Turn to N position: spsN || spiN
@@ -53,17 +53,6 @@ void setBHome(long Bos) {
   CurrentBos = Bos;
 }
 
-void setPos(long Pos, int mode) {
-  long deltaPos = Pos - CurrentPos;
-  movePos(deltaPos, mode);
-}
-
-void setBos(long Bos, int mode) {
-  long deltaBos = Bos - CurrentBos;
-  moveBos(deltaBos, mode);
-}
-
-
 void movePos(long dPos, int mode) {
   if ( mode < 2 ){
     dPos /= 2;  
@@ -96,7 +85,15 @@ void moveBos(long dBos, int mode) {
   Serial.println("OK\r");
 }
 
+void setPos(long Pos, int mode) {
+  long deltaPos = Pos - CurrentPos;
+  movePos(deltaPos, mode);
+}
 
+void setBos(long Bos, int mode) {
+  long deltaBos = Bos - CurrentBos;
+  moveBos(deltaBos, mode);
+}
 
 float toFloat(String s) {
   char carray[s.length() + 1];            //determine size of the array
@@ -147,6 +144,11 @@ void loop() {
         }
         setHome(0);
         Serial.println("OK\r");
+        nema.release();
+      } else if (inputString.startsWith("sr")) {
+        // release Nema.
+        nema.release();
+        Serial.println("OK\r");
       }
     } else if (inputString.startsWith("b")) {
       // These are the set* functions for 28BYJ-48
@@ -179,6 +181,11 @@ void loop() {
           tirf.step(-CurrentBos/2, FORWARD, SINGLE);
         }
         setBHome(0);
+        Serial.println("OK\r");
+        tirf.release();
+      } else if (inputString.startsWith("br")) {
+        // release Tirf.
+        tirf.release();
         Serial.println("OK\r");
       }  
     }
